@@ -1,0 +1,10 @@
+.button {
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+    background-color: rgb(48, 48, 172);
+    color: white;
+    font-size: 14px;
+    display: flex;
+    justify-self: center;
+}
