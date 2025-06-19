@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Modal from 'react-modal';
 import s from './ImageModal.module.css'
-import { TbBorderRadius } from 'react-icons/tb';
 
-const ImageModal = ({ modalIsOpen, closeModal, currentImage }) => {
+interface ImageModalProps {
+    modalIsOpen: boolean;
+    closeModal: () => void;
+    currentImage: string | null;
+}
+
+const ImageModal: FC<ImageModalProps> = ({ modalIsOpen, closeModal, currentImage }) => {
 
     const customStyles = {
         content: {
@@ -24,7 +29,7 @@ const ImageModal = ({ modalIsOpen, closeModal, currentImage }) => {
             backgroundColor: "rgba(0, 0, 0, 0.7)",
         },
     };
-    Modal.setAppElement(document.getElementById("root"));
+    Modal.setAppElement(document.getElementById("root") as HTMLElement);
 
     return (
         <>

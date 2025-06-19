@@ -1,25 +1,29 @@
 
 import { useEffect, useState } from "react";
 import './App.css'
-import ErrorMessage from './components/ErrorMessage/ErrorMessage'
-import ImageGallery from './components/ImageGallery/ImageGallery'
-import ImageModal from './components/ImageModal/ImageModal'
-import Loader from './components/Loader/Loader'
 import { LoadMoreBtn } from './components/LoadMoreBtn/LoadMoreBtn'
 import { SearchBar } from './components/SearchBar/SearchBar'
 import { fetchImages } from "./services/api";
 import toast, { Toaster } from "react-hot-toast";
-import Modal from 'react-modal';
+import ImageModal from "./components/ImageModal/ImageModal";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
+import Loader from "./components/Loader/Loader";
+import { ErrorMessage } from "formik";
+import { UnsplashImage } from "./types";
+
 
 
 function App() {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isError, setIsError] = useState(false);
-  const [currentImage, setCurrentImage] = useState(null);
+  const [images, setImages] = useState<UnsplashImage[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+
+
 
 
   useEffect(() => {
@@ -33,9 +37,14 @@ function App() {
         setImages(prev => [...prev, ...res.results]);
         setTotalPages(res.total_pages);
       }
-      catch (error) {
+      catch (error: unknown) {
         setIsError(true);
-        toast.error(`${error}`);
+
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Unknown error occurred");
+        }
       }
       finally { setLoading(false); };
     }
@@ -45,41 +54,42 @@ function App() {
     };
   }, [query, page]);
 
-  const handleChangeQuery = (newQuery) => {
+
+
+
+
+  const handleChangeQuery = (newQuery: string): void => {
     setImages([]);
     setPage(1);
     setQuery(newQuery);
   }
-  const handleChangePage = () => {
+  const handleChangePage = (): void => {
     setPage(page + 1);
   }
-
-
-
-  const [modalIsOpen, setIsOpen] = useState(false);
-
-  function openModal() {
-    setIsOpen(true);
-  }
-  function closeModal() {
-    setIsOpen(false);
-  }
-  const handleClickModal = (imgUrl) => {
+  const handleClickModal = (imgUrl: string): void => {
     setCurrentImage(imgUrl);
     openModal();
   };
 
+
+  function openModal(): void {
+    setIsOpen(true);
+  }
+  function closeModal(): void {
+    setIsOpen(false);
+  }
+
   return (
     <>
       <Toaster position="top-center" />
-      <ImageModal modalIsOpen={modalIsOpen}
+      <ImageModal
+        modalIsOpen={modalIsOpen}
         closeModal={closeModal}
-
         currentImage={currentImage}
       />
 
       <SearchBar handleChangeQuery={handleChangeQuery} />
-      {isError && < ErrorMessage />}
+      {isError && < ErrorMessage name="query" />}
       <ImageGallery images={images} handleClickModal={handleClickModal} />
       {loading && <Loader />}
       {images.length > 0 && page < totalPages && !loading && (

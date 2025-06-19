@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { FC } from 'react'
 import ImageCard from '../ImageCard/ImageCard'
 import s from './ImageGallery.module.css'
+import { UnsplashImage } from '../../types';
 
-const ImageGallery = ({ images, handleClickModal }) => {
+
+interface ImageGalleryProps {
+    images: UnsplashImage[];
+    handleClickModal: (imgUrl: string) => void;
+}
+
+const ImageGallery: FC<ImageGalleryProps> = ({ images, handleClickModal }) => {
     return (
         <>
             {images.length > 0 && (

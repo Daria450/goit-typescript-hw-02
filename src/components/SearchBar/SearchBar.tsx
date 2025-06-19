@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { IoIosSearch } from "react-icons/io";
 import s from "./SearchBar.module.css"
-import { Field, Form, Formik } from 'formik';
-import toast, { Toaster } from "react-hot-toast";
+import { Field, Form, Formik, FormikHelpers } from 'formik';
+import toast from "react-hot-toast";
 
-export const SearchBar = ({ handleChangeQuery }) => {
+interface SearchBarProps {
+    handleChangeQuery: (newQuery: string) => void;
+}
+
+interface SearchFormValues {
+    query: string;
+}
+
+export const SearchBar: FC<SearchBarProps> = ({ handleChangeQuery }) => {
     const initialValues = {
         query: '',
     };
-    const handleSubmit = (values, options) => {
+    const handleSubmit = (values: SearchFormValues,
+        options: FormikHelpers<SearchFormValues>) => {
         handleChangeQuery(values.query);
         if (!values.query.trim()) {
             toast.error("The field cannot be empty");
